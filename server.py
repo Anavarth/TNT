@@ -3,13 +3,12 @@ import tweepy
 from tweepy import OAuthHandler
 from textblob import TextBlob
 import sys
- 
 class TwitterClient(object):
     def __init__(self):
-        consumer_key = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-        consumer_secret = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-        access_token = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
-        access_token_secret = 'XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX'
+        consumer_key = 'X0tBcqHUyEw4ff4r0gbKuUVMx'
+        consumer_secret = 'MkKH8EQO0jJIagnp18SE8ObPaum2Drrw0lm4999rpaqgVdcWgh'
+        access_token = '2878973166-29Ceyi2i1xZCh8f9D02tdlwHxW5Fn4xFotHNWZt'
+        access_token_secret = '6LkjXnBJ0SrjV5JYtl7NXyH2AL1NF7bRNHMsE3Xn6fVFg'
         try:
             self.auth = OAuthHandler(consumer_key, consumer_secret)
             self.auth.set_access_token(access_token, access_token_secret)
@@ -43,29 +42,29 @@ class TwitterClient(object):
         except tweepy.TweepError as e:
             print("Error : " + str(e)) 
 def main():
-	file = open("News.txt","w")
+	buf = ''
 	api = TwitterClient()
 	tweets = api.get_tweets(query = 'Trending News', count = 200)
 	non_bmp_map = dict.fromkeys(range(0x10000, sys.maxunicode + 1), 0xfffd)
 	gtweets = [tweet for tweet in tweets if tweet['sentiment'] == 'good']
-	file.write("Good news percentage: {} %".format(100*len(gtweets)/len(tweets)))
+	buf = buf + 'Good news percentage: {} %'.format(100*len(gtweets)/len(tweets))
 	#print("Good news percentage: {} %".format(100*len(gtweets)/len(tweets)))
 	btweets = [tweet for tweet in tweets if tweet['sentiment'] == 'bad']
-	file.write("\nBad news percentage: {} %".format(100*len(btweets)/len(tweets)))
+	buf = buf + '\nBad news percentage: {} %'.format(100*len(btweets)/len(tweets))
 	#print("Bad news percentage: {} %".format(100*len(btweets)/len(tweets)))
-	file.write("\nNeutral news percentage: {} %".format(100*(len(tweets) - len(btweets) - len(gtweets))/len(tweets)))
+	buf = buf + '\nNeutral news percentage: {} %'.format(100*(len(tweets) - len(btweets) - len(gtweets))/len(tweets))
 	#print("Neutral news percentage: {} %".format(100*(len(tweets) - len(btweets) - len(gtweets))/len(tweets)))
-	file.write("\n\nGood news:\n")
+	buf = buf + '\n\nGood news:\n'
 	#print("\n\nGood news:")
 	for tweet in gtweets[:1000]:
 		#print(tweet['text'].translate(non_bmp_map))
-		file.writelines(tweet['text'].translate(non_bmp_map))
-	file.write("\n\nBad news:\n")
+		buf = buf + tweet['text'].translate(non_bmp_map)
+	buf = buf + '\n\nBad news:\n'
 	#print("\n\nBad news:")
 	for tweet in btweets[:1000]:
 		#print(tweet['text'].translate(non_bmp_map))
-		file.writelines(tweet['text'].translate(non_bmp_map))
-	file.close()
+		buf = buf + tweet['text'].translate(non_bmp_map)
+	return buf
 import socket
 s = socket.socket()         
 print("Socket successfully created")
@@ -78,6 +77,7 @@ while True:
 	c,addr = s.accept()
 	print('Got connection from',addr)
 	print(c.recv(1024).decode('ascii'))
-	main()
-	c.send('News Fetched!!!'.encode())
+	buf = main()
+	#c.send('News Fetched!!!'.encode())
+	c.send(buf.encode())
 	c.close()
