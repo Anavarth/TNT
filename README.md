@@ -1,4 +1,4 @@
-Twitter News Trendind(TNT)
+Twitter News Trending(TNT)
 Combining Networking and Sentiment Analysis I did this project.
 For execution you need Twitter API and python libraries
 In order to fetch tweets through Twitter API, one needs to register an App through their twitter account. Follow these steps for the same:
